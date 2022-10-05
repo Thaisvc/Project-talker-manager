@@ -14,8 +14,8 @@ router.get('/', async (_req, res) => {
 router.get('/:id', validateId, async (req, res) => {
   const id = Number(req.params.id);
   const allSpeakerFile = await readFiles();
-  const team = allSpeakerFile.find((t) => t.id === id);
-  res.json(team);
+  const person = allSpeakerFile.find((p) => p.id === id);
+  res.json(person);
 });
  
 module.exports = router;
