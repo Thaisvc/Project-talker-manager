@@ -15,4 +15,4 @@ async function readFiles() {
   }
 }
 
-module.exports = readFiles;
+module.exports = { readFiles };

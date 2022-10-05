@@ -21,3 +21,8 @@ app.listen(PORT, () => {
 //---------------------------------------------------------------------------------------------------------
 
 app.use('/talker', talkerRoute);
+/* app.use('/:id', talkerRoute); */
+
+/* app.use((err, req, res, _next) => {
+  res.status(500).json({ message: `Algo deu errado! Mensagem: ${err.message}` });
+}); */
