@@ -1,5 +1,6 @@
 const fs = require('fs').promises;
 const path = require('path');
+const randtoken = require('rand-token');
 
 const FILE_JSON_DATA = '../talker.json';
 
@@ -15,4 +16,8 @@ async function readFiles() {
   }
 }
 
-module.exports = { readFiles };
+function createRandomToken() {
+  return randtoken.generate(16);
+}
+
+module.exports = { readFiles, createRandomToken };

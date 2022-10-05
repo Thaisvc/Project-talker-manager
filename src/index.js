@@ -5,6 +5,7 @@ const app = express();
 app.use(bodyParser.json());
 
 const talkerRoute = require('./Router/talkerRouter');
+const loginRouter = require('./Router/loginRouter');
 
 const HTTP_OK_STATUS = 200;
 const PORT = '3000';
@@ -21,7 +22,7 @@ app.listen(PORT, () => {
 //---------------------------------------------------------------------------------------------------------
 
 app.use('/talker', talkerRoute);
-/* app.use('/:id', talkerRoute); */
+app.use('/login', loginRouter);
 
 /* app.use((err, req, res, _next) => {
   res.status(500).json({ message: `Algo deu errado! Mensagem: ${err.message}` });

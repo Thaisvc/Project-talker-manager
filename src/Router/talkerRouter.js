@@ -17,5 +17,5 @@ router.get('/:id', validateId, async (req, res) => {
   const person = allSpeakerFile.find((p) => p.id === id);
   res.json(person);
 });
- 
+
 module.exports = router;
