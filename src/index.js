@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+require('express-async-errors');
 
 const app = express();
 app.use(bodyParser.json());
@@ -24,6 +25,6 @@ app.listen(PORT, () => {
 app.use('/talker', talkerRoute);
 app.use('/login', loginRouter);
 
-/* app.use((err, req, res, _next) => {
-  res.status(500).json({ message: `Algo deu errado! Mensagem: ${err.message}` });
-}); */
+app.use((error, _req, res, _next) => {
+  res.status(400).json({ message: `${error.message}` });
+});

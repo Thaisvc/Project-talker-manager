@@ -1,4 +1,5 @@
 const express = require('express');
+require('express-async-errors');
 
 const router = express.Router();
 
@@ -7,8 +8,7 @@ const { validateId } = require('../middlewares/speakerMiddle');
 
 router.get('/', async (_req, res) => {
  const allSpeakerFile = await readFiles();
-  
-   res.status(200).json(allSpeakerFile);
+  res.status(200).json(allSpeakerFile);
 });
 
 router.get('/:id', validateId, async (req, res) => {
