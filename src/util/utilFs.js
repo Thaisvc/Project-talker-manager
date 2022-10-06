@@ -1,3 +1,4 @@
+/* eslint-disable no-throw-literal */
 /* eslint-disable no-useless-escape */
 const fs = require('fs').promises;
 const path = require('path');
@@ -35,12 +36,11 @@ const schema = Joi.object({
 
 });
 
-async function validations(user) {
-const { error } = await schema.validate(user);
-const err = { message: error.details[0].message };
-const { message } = err;
-if (error) throw new Error(message);
-// lint nao aceita if (error) throw ({ message: error.details[0].message });
-}
+const validations = async (product) => {
+  const { error } = await schema.validate(product, { convert: false });
+  if (error) {
+      throw { message: error.details[0].message, status: 400 };
+  }
+};
 
 module.exports = { readFiles, createRandomToken, validations };
