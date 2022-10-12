@@ -1,6 +1,10 @@
 const express = require('express');
 require('express-async-errors');
+const fs = require('fs').promises;
 
+const path = require('path');
+
+const driret = path.resolve(__dirname, '..', 'talker.json');
 const router = express.Router();
 
 const { readFiles, writeFiles, validationUser } = require('../util/utilFs');
@@ -30,4 +34,15 @@ router.post('/', authenticated, async (req, res) => {
   return res.status(201).json(info);
  });
 
+ router.put('/:id', authenticated, async (req, res) => {
+  const idParams = req.params.id;
+  const talk = { id: Number(idParams), ...req.body };
+  await validationUser(req.body);
+  const talkers = await readFiles();
+  const getId = talkers.findIndex((ind) => ind.id === Number(idParams));
+  talkers[getId] = talk;
+  await fs.writeFile(driret, JSON.stringify(talk));
+ console.log(talk);
+     res.status(200).json(talk);
+});
 module.exports = router;
