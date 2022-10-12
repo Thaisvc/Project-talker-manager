@@ -10,6 +10,17 @@ const router = express.Router();
 const { readFiles, writeFiles, schemaPeople } = require('../util/utilFs');
 const { validateId, authenticated } = require('../middlewares/speakerMiddle');
 
+router.get('/search', authenticated, async (req, res) => {
+  const { q } = req.query;
+  const talkerFile = await readFiles();
+
+  if (q) {
+   const talkUser = talkerFile.filter((user) => user.name.toLowerCase().includes(q.toLowerCase()));
+   res.status(200).json(talkUser);
+  }
+  res.status(200).json([]);
+});
+
 router.get('/', async (_req, res) => {
   const allSpeakerFile = await readFiles();
   res.status(200).json(allSpeakerFile);
@@ -64,4 +75,5 @@ router.delete('/:id', authenticated, async (req, res) => {
   await fs.writeFile(driret, JSON.stringify(talkerFile));
   res.status(204).json();
 });
+
 module.exports = router;
