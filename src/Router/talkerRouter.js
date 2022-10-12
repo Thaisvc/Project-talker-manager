@@ -7,7 +7,7 @@ const path = require('path');
 const driret = path.resolve(__dirname, '..', 'talker.json');
 const router = express.Router();
 
-const { readFiles, writeFiles, schemaPeople, schema } = require('../util/utilFs');
+const { readFiles, writeFiles, schemaPeople } = require('../util/utilFs');
 const { validateId, authenticated } = require('../middlewares/speakerMiddle');
 
 router.get('/', async (_req, res) => {
@@ -39,18 +39,18 @@ router.post('/', authenticated, async (req, res) => {
 });
 
 router.put('/:id', authenticated, async (req, res) => {
-  const idParams = req.params.id;
-  const talk = { id: Number(idParams), ...req.body };
-  const { error } = await schema.validate(req.body, { convert: false });
-  const talkers = await readFiles();
-  const getId = talkers.findIndex((ind) => ind.id === Number(idParams));
-  talkers[getId] = talk;
-  await fs.writeFile(driret, JSON.stringify(talk));
-  console.log(talk);
+  const userId = Number(req.params.id);
+  const updateUser = { id: Number(userId), ...req.body };
+  const { error } = schemaPeople.validate(req.body);
+  const file = await readFiles();
+  const getId = file.findIndex((ind) => ind.id === userId);
+  file[getId] = updateUser;
+  await fs.writeFile(driret, JSON.stringify(file));
+
   if (error) {
-    res.status(400).json({ message: error.details[0].message });
+     res.status(400).json({ message: error.details[0].message });
   } else {
-    res.status(200).json(talkers);
+     res.status(200).json(updateUser);
   }
 });
 
