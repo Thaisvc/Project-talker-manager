@@ -1,13 +1,10 @@
-/* eslint-disable sonarjs/no-duplicate-string */
-/* eslint-disable no-throw-literal */
-/* eslint-disable no-useless-escape */
 const fs = require('fs').promises;
 const path = require('path');
 // const { join } = require('path');
 const randtoken = require('rand-token');
 const Joi = require('joi');
 // https://joi.dev/api/?v=17.6.1
-
+const SCHEMA = 'O campo {{#label}} é obrigatório';
 const FILE_JSON_DATA = '../talker.json';
 
 async function readFiles() {
@@ -38,25 +35,28 @@ function createRandomToken() {
 }
 
 const schema = Joi.object({
-  email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ['com', 'met'] } }).required(),
+  password: Joi.string().min(6).required().messages({
+    'any.required': SCHEMA,
+    'string.min': 'O {{#label}} deve ter pelo menos 6 caracteres',
+    'string.empty': SCHEMA,
+  }),
 
-  password: Joi.string().min(6).required(),
-}).messages({
-  'any.required': 'O campo {{#label}} é obrigatório',
-  'string.empty': 'O campo {{#label}} é obrigatório',
-  'string.email': 'O {{#label}} deve ter o formato \"email@email.com\"',
-  'string.min': 'O {{#label}} deve ter pelo menos 6 caracteres',
-
+  email: Joi.string().required().email().lowercase()
+  .messages({
+      'any.required': SCHEMA,
+      'string.email': 'O {{#label}} deve ter o formato "email@email.com"',
+      'string.empty': SCHEMA,
+    }),
 });
 
 const schemaPeople = Joi.object({
   name: Joi.string().min(3).required(),
   age: Joi.number().integer().min(18).required()
     .messages({
-      'any.string': 'O campo {{#label}} é obrigatório',
-      'number,empty': 'O campo {{#label}} é obrigatório',
+      'any.string': SCHEMA,
+      'number,empty': SCHEMA,
       'number.min': 'A pessoa palestrante deve ser maior de idade',
-      'number.base': 'O campo {{#label}} é obrigatório',
+      'number.base': SCHEMA,
     }),
   talk: Joi.object().required()
     .keys({
@@ -76,27 +76,27 @@ const schemaPeople = Joi.object({
     }),
 
 }).messages({
-  'any.required': 'O campo {{#label}} é obrigatório',
-  'string.empty': 'O campo {{#label}} é obrigatório',
+  'any.required': SCHEMA,
+  'string.empty': SCHEMA,
   'string.min': 'O {{#label}} deve ter pelo menos 3 caracteres',
   'number.max': 'O campo {{#label}} deve ser um inteiro de 1 à 5',
   'number.min': 'O campo {{#label}} deve ser um inteiro de 1 à 5',
   'string.pattern.base': 'O campo "watchedAt" deve ter o formato "dd/mm/aaaa"',
 });
 
-const validations = async (product) => {
-  const { error } = await schema.validate(product, { convert: false });
+/* const validations = async (product) => {
+ 
   if (error) {
     throw { message: error.details[0].message, status: 400 };
   }
-};
+}; */
 
-const validationUser = async (user) => {
-  const { error } = await schemaPeople.validate(user);
+/* const validationUser = async (user) => {
+  
   if (error) {
     throw { message: error.details[0].message, status: 400 };
   }
-};
+}; */
 
 /* REQ 5
  const createPeople = async (objPeople) => {
@@ -111,10 +111,8 @@ const validationUser = async (user) => {
 module.exports = {
   readFiles,
   createRandomToken,
-  validations,
-
+  schema,
+  schemaPeople,
   writeFiles,
-
-  validationUser,
 
 };

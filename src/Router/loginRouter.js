@@ -1,13 +1,16 @@
 const express = require('express');
 
 const router = express.Router();
-const { createRandomToken, validations } = require('../util/utilFs');
+const { createRandomToken, schema } = require('../util/utilFs');
 
 router.post('/', async (req, res) => {
-    const user = req.body;
-    await validations(user);
+    const { error } = await schema.validate(req.body);
     const tokenRaleatory = createRandomToken();
-    res.status(200).json({ token: tokenRaleatory });
+    if (error) {
+        res.status(400).json({ message: error.details[0].message });
+      } else {
+        res.status(200).json({ token: tokenRaleatory });
+      }
 });
 
 module.exports = router;
