@@ -11,7 +11,7 @@ const { readFiles, writeFiles, validationUser } = require('../util/utilFs');
 const { validateId, authenticated } = require('../middlewares/speakerMiddle');
 
 router.get('/', async (_req, res) => {
- const allSpeakerFile = await readFiles();
+  const allSpeakerFile = await readFiles();
   res.status(200).json(allSpeakerFile);
 });
 
@@ -29,12 +29,12 @@ router.post('/', authenticated, async (req, res) => {
 
   const file = await readFiles();
   info.id = file.length + 1;
-  
+
   await writeFiles(info);
   return res.status(201).json(info);
- });
+});
 
- router.put('/:id', authenticated, async (req, res) => {
+router.put('/:id', authenticated, async (req, res) => {
   const idParams = req.params.id;
   const talk = { id: Number(idParams), ...req.body };
   await validationUser(req.body);
@@ -42,7 +42,18 @@ router.post('/', authenticated, async (req, res) => {
   const getId = talkers.findIndex((ind) => ind.id === Number(idParams));
   talkers[getId] = talk;
   await fs.writeFile(driret, JSON.stringify(talk));
- console.log(talk);
-     res.status(200).json(talk);
+  console.log(talk);
+  res.status(200).json(talkers);
+});
+
+router.delete('/:id', authenticated, async (req, res) => {
+  const idUser = Number(req.params.id);
+
+  const talkerFile = await readFiles();
+  const FindId = talkerFile.findIndex((index) => index.id === idUser);
+  talkerFile.splice(FindId, 1);
+
+  await fs.writeFile(driret, JSON.stringify(talkerFile));
+  res.status(204).json();
 });
 module.exports = router;
