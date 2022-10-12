@@ -1,13 +1,25 @@
 const { readFiles } = require('../util/utilFs');
 
 const validateId = async (req, res, next) => {
-    console.log('midllee');
     const id = Number(req.params.id);
     const allSpeakerFile = await readFiles();
-   if (allSpeakerFile.some((speaker) => speaker.id === id)) {
-    return next();
-   }
-   res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
+    if (allSpeakerFile.some((speaker) => speaker.id === id)) {
+        return next();
+    }
+    res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
 };
 
-module.exports = { validateId };
+async function authenticated(req, res, next) {
+    const token = req.headers.authorization;
+   
+    if (!token) {
+        return res.status(401).json({ message: 'Token não encontrado' });
+    }
+
+    if (token.length !== 16) {
+        return res.status(401).json({ message: 'Token inválido' });
+    }
+    next();
+}
+
+module.exports = { validateId, authenticated };

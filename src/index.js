@@ -26,5 +26,5 @@ app.use('/talker', talkerRoute);
 app.use('/login', loginRouter);
 
 app.use((error, _req, res, _next) => {
-  res.status(400).json({ message: `${error.message}` });
+  res.status(error.status || 500).json({ message: `${error.message}` });
 });
